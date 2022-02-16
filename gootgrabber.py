@@ -3,7 +3,7 @@
 """
     Title:      GootGrabber
     Desc:       Extract IOC's from Gootloaders.
-    Author:     Adithya Chandra
+
 """
 
 import re
@@ -12,6 +12,7 @@ import sys
 import os
 import warnings
 import socket
+import time
 from codecs import encode, decode
 from pathlib import Path
 
@@ -46,6 +47,7 @@ def decode_cipher(cipher):
     return plaintext
 
 def Main():
+    progressbar()
     argv = sys.argv
     if(os.path.isfile(argv[1])): #check for file
         jsFile = ""
@@ -85,6 +87,7 @@ def Main():
                     
     round = 0
     while round < 2:
+
                     matches = re.findall(code_regex, jsFile, re.MULTILINE)
                     longest_match = ""
                     for m in matches:
@@ -117,17 +120,26 @@ def Main():
     
     print("\nIP Address Details:")
     for domain in all_domains:
-      print("IP address of domain:",domain)
+      print("IP address of domain:",domain.replace(".","[.]"))
       print(socket.gethostbyname(domain))
+      
+def progressbar():
+  toolbar_width = 15
+  print("Analysing the file...")
+  print("---")
+  sys.stdout.write("[%s]" % (" " * toolbar_width))
+  sys.stdout.flush()
+  sys.stdout.write("\b" * (toolbar_width+1)) 
+  for i in range(toolbar_width):
+      time.sleep(0.1) 
+      sys.stdout.write("*")
+      sys.stdout.flush()
+  sys.stdout.write("\n")
 
 def Help():
-    print("Usage: gootGrabber.py \"path to file.js\"")
+    print("gootgrabber.py \"path to file.js\"")
 
 if(len(sys.argv) < 2):
     Help()
 else:
     Main()
-
-
-
-
